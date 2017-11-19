@@ -78,11 +78,11 @@
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\arithmetic.cpp" />
+    <ClCompile Include="Exprestion.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\include\arithmetic.h" />
-    <ClInclude Include="..\..\..\include\stack.h" />
+    <ClInclude Include="Exprestion.h" />
+    <ClInclude Include="stack.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -97,13 +97,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\samples\main_arithmetic.cpp" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\arithmetic\arithmetic.vcxproj">
       <Project>{26f83c30-0e87-4474-8f0f-eab7cf3d97c4}</Project>
       <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\arithmetic\Main.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
