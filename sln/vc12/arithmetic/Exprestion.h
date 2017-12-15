@@ -7,15 +7,26 @@ using namespace std;
 
 enum LexemType {LBRACKET, RBRACKET, OPERATOR, VALUE, VARIABLE, UNKNOWN};	
 
+struct Var
+{
+	string name;
+	double val;
+public:
+	Var(string n = "", double v = 0)
+		{name = n; val = v;}
+	~Var()
+		{name = ""; val = 0;}
+};
+
 struct Lexem										//Лексема
 {
-	std::string str; 
+	string str; 
 	LexemType tp;
 public:
 	Lexem(string src = "", LexemType lt = UNKNOWN)
 		{str = src; tp = lt;};
 	~Lexem()
-	{str = ""; tp = UNKNOWN;}
+		{str = ""; tp = UNKNOWN;}
 };
 
 class Exprestion
@@ -24,10 +35,11 @@ private:
 	static const string symb;						//Разрешённые символы
 	static const string vari;						//Переменные
 	static const string prior;						//Приоритет
-	double* var;										//Переменные
-	int nVar;											//Количество переменных
 	string expr;										//Выражение
 	Lexem* pLex;										//Массив лексем
+	Var* var;
+	int nVar;
+	string hvar;
 	int nLex;											//Количество лексем
 	void clrspace();									//Удаление пробелов
 	void toPZ();										//Перевод в ПЗ
@@ -38,6 +50,7 @@ public:
 	~Exprestion()										//Деструктор
 	{ delete[] pLex; }
 	void parse();										//Разбор на лексемы
+	void unmin();
 								// ПРОВЕРКИ	//
 	bool BracketsCheck() const;					//Проверка на соответствие скобок
 	bool OperatorCheck() const;					//Проверка на корректность операторов
@@ -54,8 +67,13 @@ public:
 								// ПОМОЩЬ //
 	void printLex()
 	{
+		cout<<"pLex: \"";
 		for (int i=0;i<nLex;i++)
-			cout<<pLex[i].str<<" "<<pLex[i].tp<<endl;
-		cout<<endl;
+			cout<<pLex[i].str<<" ";
+		cout<<"\""<<endl;
+	}
+	string GetExpr()
+	{
+		return expr;	
 	}
 };

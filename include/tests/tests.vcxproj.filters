@@ -16,15 +16,12 @@
     <ClCompile Include="..\..\..\test\test_stack.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\test\test_exprestion.cpp">
+    <ClCompile Include="..\..\..\test\test_arithmetic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\..\..\Users\Iluja\Desktop\mp2-lab3-arithmetic\sln\vc12\arithmetic\stack.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\..\..\Users\Iluja\Desktop\mp2-lab3-arithmetic\sln\vc12\arithmetic\Exprestion.h">
+    <ClInclude Include="..\..\..\include\stack.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

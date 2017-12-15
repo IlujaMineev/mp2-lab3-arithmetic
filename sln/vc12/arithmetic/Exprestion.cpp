@@ -34,7 +34,8 @@ void Exprestion::parse()													//Разбор на лексемы
 					pLex[lexi].str = expr[tek]; 
 					pLex[lexi].tp = VARIABLE;
 					cout<<"The variable "<<pLex[lexi].str<<" have been seen in the exprestion"<<endl;
-					nVar++;
+					if (hvar.find(pLex[lexi].str) == string::npos)
+						hvar += pLex[lexi].str;
 					lexi++;
 					tek++;
 				}
@@ -77,20 +78,26 @@ void Exprestion::parse()													//Разбор на лексемы
 						}
 		}
 		nLex = lexi;
-		/*if (nVar != 0)
+		if ((nVar = hvar.length()) != 0)
 		{
 			cout<<"Please realise variables"<<endl;
-			var = new double[nVar];
-			int j=0;
+			var = new Var[nVar];
+			int* f = new int[hvar.length()];
+			for (int i=0; i<hvar.length(); i++)
+				f[i] = 0;
 			for (int i=0;i<nLex;i++)
 				if (pLex[i].tp == VARIABLE)
-				{
-					cout<<pLex[i].str<<" = ";
-					cin>>var[j];
-					j++;
-					cout<<endl;
+				{	
+					if (f[hvar.find(pLex[i].str)] == 0)
+					{
+						var[hvar.find(pLex[i].str)].name = pLex[i].str;
+						cout<<var[hvar.find(pLex[i].str)].name<<" = ";
+						cin>>var[hvar.find(pLex[i].str)].val;
+						cout<<endl;
+						f[hvar.find(pLex[i].str)] = 1;
+					}
 				}
-		}*/
+		}
 	}
 	else
 		throw "the exprestion is empty";
@@ -100,6 +107,7 @@ Exprestion::Exprestion(const std::string i_expr)		//Конструктор
 {
 	expr = i_expr;
 	clrspace();
+	unmin();
 	cout<<expr<<endl<<endl;;
 	pLex = new Lexem[expr.length()];
 	for (int i=0; i<expr.length(); i++)
@@ -119,17 +127,39 @@ Exprestion& Exprestion::operator=(const Exprestion& exp)
 	return *this;
 }
 
+void Exprestion::unmin()
+{
+	int k = 0;
+	while (k < expr.length())
+	{
+		if (symb.find(expr[k]) == 12)
+		{
+			if (k == 0)
+				expr.insert(k,"0");
+			else
+				if (symb.find(expr[k-1]) == 15)
+					expr.insert(k,"0");
+		}
+		k++;
+	}
+}
+
 bool Exprestion::BracketsCheck() const										//Проверка на соответствие скобок
 {
 	Stack<int> a(expr.length());
 	int fict;
+	int fl = 0;
+	int pfl = 0;
 	for (int i=0; i<expr.length(); i++)
 		if (expr[i] == '(')
 		{
 			a.push(1);
 
+			if (fl = 0)
+				pfl = i;
+
 			if ((i-1) >= 0)
-				if ((symb.find(expr[i-1]) == string::npos) || ((symb.find(expr[i-1]) < 11) || (symb.find(expr[i-1]) > 14)))
+				if ((symb.find(expr[i-1]) == string::npos) || ((symb.find(expr[i-1]) < 11)/* || (symb.find(expr[i-1]) > 14)*/))
 				{
 					cout<<"Denied symbol before '(' pos: "<<i<<endl;
 					return false;
@@ -147,7 +177,7 @@ bool Exprestion::BracketsCheck() const										//Проверка на соответствие скобо
 				}
 				
 			if ((i+1) < expr.length())
-				if ((symb.find(expr[i+1]) == string::npos) || ((symb.find(expr[i+1]) < 11) || (symb.find(expr[i+1]) > 14)))
+				if ((symb.find(expr[i+1]) == string::npos) || ((symb.find(expr[i+1]) < 11)/* || (symb.find(expr[i+1]) > 14)*/))
 				{
 					cout<<"Denied symbol after ')' pos: "<<i<<endl;
 					return false;
@@ -157,7 +187,7 @@ bool Exprestion::BracketsCheck() const										//Проверка на соответствие скобо
 		return true;
 	else
 		return false;
-	cout<<"RBrackets lesser than LBrackets"<<endl;
+	cout<<"RBrackets lesser than LBrackets"<<" pos: "<<pfl<<endl;
 }
 
 bool Exprestion::OperatorCheck() const										//Проверка на корректность операторов
@@ -278,7 +308,7 @@ void Exprestion::toPZ() 									//Перевод в ПЗ
 
 	while (tek < nLex)
 	{
-		if (pLex[tek].tp == VALUE)
+		if ((pLex[tek].tp == VALUE) || (pLex[tek].tp == VARIABLE))
 		{
 			view += pLex[tek].str;
 			res[ires++] = pLex[tek++];
@@ -296,6 +326,7 @@ void Exprestion::toPZ() 									//Перевод в ПЗ
 						res[ires++] = x;
 						x=st.pop();
 					}
+					tek++;
 				}
 				else
 					if (pLex[tek].tp == OPERATOR)
@@ -316,25 +347,12 @@ void Exprestion::toPZ() 									//Перевод в ПЗ
 							st.push(pLex[tek++]);
 						}
 					}
-					else
-						if (pLex[tek].tp == VARIABLE)
-						{
-							double vr;
-							cout<<"Please set the value of variable "<<pLex[tek].str<<" = ";
-							cin>>vr;
-							cout<<endl;
-							pLex[tek].tp = VALUE;
-							std::ostringstream h;
-							h << vr;
-							pLex[tek].str = h.str();
-							view += pLex[tek].str;
-							res[ires++] = pLex[tek++];
-						}
 	}
 
-	while (!st.empty());
+	while (!st.empty())
 	{
 		x = st.pop();
+		view += x.str;
 		res[ires++] = x;
 	}
 
@@ -343,12 +361,60 @@ void Exprestion::toPZ() 									//Перевод в ПЗ
 	pLex = new Lexem [nLex];
 	for (int i=0; i<nLex; i++)
 		pLex[i] = res[i];
-
-	cout<<view<<endl;
 }
 
 double Exprestion::Calc()													//Подсчёт результата
 {
+	Stack<double> st;
+	int k = 0;
+	double lop = 0, 
+			 rop = 0, 
+			 nop = 0;
+
 	toPZ();
-	return 0;
+
+	while (k < nLex)
+	{
+		if (pLex[k].tp == VARIABLE)
+		{
+			st.push(var[hvar.find(pLex[k].str)].val);
+			k++;
+		}	
+		else
+			if (pLex[k].tp == VALUE)
+			{
+				st.push(stod(pLex[k].str));
+				k++;
+			}
+			else
+				if ((pLex[k].tp == OPERATOR) && (!st.empty()))
+				{
+					rop = st.pop();
+					if (!st.empty())
+						lop = st.pop();
+					else
+						throw "WTF";
+					if (pLex[k].str == "+")
+						nop = lop + rop;
+					else
+						if (pLex[k].str == "-")
+							nop = lop - rop;
+						else
+							if (pLex[k].str == "*")
+								nop = lop * rop;
+							else
+								if (pLex[k].str == "/")
+									nop = lop / rop;
+					st.push(nop);
+					k++;
+				}
+	}
+	if (!st.empty())
+		{
+			nop = st.pop();
+			if (st.empty())
+				return nop;
+			else
+				throw "WTF 2";
+		}
 }

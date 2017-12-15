@@ -36,8 +36,13 @@ public:
 template<class sType>
 Stack<sType>::Stack(int s) : Size(s)
 {
-	top = -1;
-	StackMem = new sType[Size];
+	if (s>0)
+	{
+		top = -1;
+		StackMem = new sType[Size];
+	}
+	else
+		throw "negative size";
 }
 
 template<class sType>
